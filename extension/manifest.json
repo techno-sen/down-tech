@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Down Tech",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Down Tech extension.",
   "permissions": [
     "downloads",

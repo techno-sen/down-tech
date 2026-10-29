@@ -555,7 +555,8 @@ fn run_ytdlp(tool: &Path, page_url: &str, cookie_file: Option<&Path>, referer: O
 
 fn needs_login(msg: &str) -> bool {
     let m = msg.to_ascii_lowercase();
-    ["sign in", "log in", "login", "cookies", "age", "bot", "private", "registered users", "rate-limit", "empty media"]
+    // Facebook says "Cannot parse data" when it shows a page for logged-out visitors
+    ["sign in", "log in", "login", "cookies", "age", "bot", "private", "registered users", "rate-limit", "empty media", "cannot parse data"]
         .iter()
         .any(|k| m.contains(k))
 }
@@ -1061,5 +1062,6 @@ mod tests {
         assert!(s.contains(".instagram.com\tTRUE\t/\tTRUE\t1900000000\tsessionid\tabc\n"));
         assert!(s.contains("www.x.com\tFALSE\t/\tFALSE\t2147483647\ta\tb=c\n"));
         assert!(needs_login("ERROR: [Instagram] abc: Requested content is not available, rate-limit reached or login required"));
+        assert!(needs_login("ERROR: [facebook] 27894120770264343: Cannot parse data; please report this issue on https://github.com/yt-dlp/yt-dlp/issues"));
     }
 }

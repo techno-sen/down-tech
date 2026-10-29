@@ -462,6 +462,28 @@ const AR: &[(&str, &str)] = &[
         "Could not get the update",
         "تعذّر الحصول على التحديث",
     ),
+    ("Update available", "يتوفر تحديث"),
+    (
+        "Facebook videos download again: Down Tech now uses your browser's Facebook login when the video needs it.",
+        "فيديوهات فيسبوك تتحمّل من جديد: يستخدم Down Tech تسجيل دخولك إلى فيسبوك في المتصفح عندما يحتاجه الفيديو.",
+    ),
+    ("Before installing a new version, Down Tech asks you first.", "قبل تثبيت إصدار جديد، يسألك Down Tech أولاً."),
+    (
+        "Version {} of Down Tech is ready. Install it now?
+
+Down Tech closes for a moment and opens again by itself.",
+        "الإصدار {} من Down Tech جاهز. هل تريد تثبيته الآن؟
+
+سيُغلق Down Tech لحظة ثم يفتح من جديد تلقائياً.",
+    ),
+    (
+        "Version {} of Down Tech is ready. Install it now?
+
+Down Tech closes for a moment and opens again by itself. Running downloads go on after the update.",
+        "الإصدار {} من Down Tech جاهز. هل تريد تثبيته الآن؟
+
+سيُغلق Down Tech لحظة ثم يفتح من جديد تلقائياً. التنزيلات الجارية تكمل بعد التحديث.",
+    ),
     (
         "Text size, font and a picture behind the main window (Options > Appearance).",
         "حجم الخط والخط وصورة خلف النافذة الرئيسية (الخيارات > المظهر).",

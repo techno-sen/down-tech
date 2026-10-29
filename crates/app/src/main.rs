@@ -336,7 +336,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     wire_main(&ui);
-    // a new version of the program itself: from GitHub, installed silently
+    // a new version of the program itself: from GitHub, installed when the user says yes
     update::spawn(&ui.ctx);
     wire_add(&ui);
     wire_batch(&ui);

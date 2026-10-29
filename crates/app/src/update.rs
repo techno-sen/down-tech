@@ -1,15 +1,16 @@
 //! New versions of Down Tech from GitHub, always on: right after the
 //! program opens it looks for a newer release; when there is one it is
-//! downloaded, checked (signature of the release + SHA-256) and installed silently, and the program
-//! starts again by itself. While the program stays open it looks again every
-//! few hours (then it waits until no download is running).
+//! downloaded and checked (signature of the release + SHA-256), then the
+//! user is asked whether to install it now. Yes: it is installed silently and
+//! the program starts again by itself. No: asked again the next time the
+//! program opens. While the program stays open it looks again every few hours.
 //! Help > Check for updates does the same at once in a window of its own
 //! "checking…", "this is the newest version", or the download of
 //! the new one with its progress, then its setup runs in front of the user.
 
 use crate::i18n::{t, tf};
 use crate::message;
-use crate::{open_window, Ctx, Ui};
+use crate::{confirm, open_window, Ctx, Ui};
 use slint::ComponentHandle;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -57,43 +58,45 @@ pub fn spawn(ctx: &Ctx) {
     if !selfupdate::installed() {
         return; // a portable copy: there is no installation to update
     }
-    let mgr = ctx.mgr.clone();
-    ctx.rt.spawn(async move {
+    let ctx = ctx.clone();
+    ctx.rt.clone().spawn(async move {
         // first check as soon as the program is open
         tokio::time::sleep(Duration::from_secs(3)).await;
-        let mut first = true;
         loop {
             if !BUSY.swap(true, Ordering::SeqCst) {
-                let started = round(&mgr, first).await;
+                let asked = round(&ctx).await;
                 BUSY.store(false, Ordering::SeqCst);
-                if started {
+                if asked {
                     return;
                 }
             }
-            first = false;
             tokio::time::sleep(Duration::from_secs(6 * 3600)).await;
         }
     });
 }
 
-/// One check. true = the installer was started.
-async fn round(mgr: &Arc<Manager>, at_start: bool) -> bool {
-    let client = mgr.client();
+/// One check. true = a new version is ready and the user was asked.
+async fn round(ctx: &Ctx) -> bool {
+    let client = ctx.mgr.client();
     let Ok(Some(rel)) = selfupdate::check(&client).await else {
         return false;
     };
     let Ok(setup) = selfupdate::download(&client, &rel, &update_dir()).await else {
         return false;
     };
-    // later checks never cut a running download short; at start the
-    // downloads simply go on after the update
-    if !at_start {
-        while downloading(mgr) {
-            tokio::time::sleep(Duration::from_secs(30)).await;
-        }
-    }
-    let sha = rel.sha256.clone();
-    let _ = slint::invoke_from_event_loop(move || apply(setup, sha));
+    let (ctx, sha, version) = (ctx.clone(), rel.sha256.clone(), rel.version.clone());
+    let _ = slint::invoke_from_event_loop(move || {
+        let text = if downloading(&ctx.mgr) {
+            tf("Version {} of Down Tech is ready. Install it now?
+
+Down Tech closes for a moment and opens again by itself. Running downloads go on after the update.", &[&version])
+        } else {
+            tf("Version {} of Down Tech is ready. Install it now?
+
+Down Tech closes for a moment and opens again by itself.", &[&version])
+        };
+        confirm(&ctx, &t("Update available"), &text, move || apply(setup, sha));
+    });
     true
 }
 

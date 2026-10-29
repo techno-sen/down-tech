@@ -357,13 +357,9 @@ pub(crate) fn is_web_address(s: &str) -> bool {
 }
 
 /// What the newest version brings (shown once after an automatic update).
-const WHATS_NEW: [&str; 6] = [
-    "Down Tech has its own name, a new icon and a simpler About window.",
-    "When Windows reserves the port that links Down Tech to the browser, Down Tech uses a spare one by itself, and the browser extension finds it.",
-    "Opening Down Tech again brings the open window to the front instead of starting a second copy.",
-    "Small windows keep their size, so their buttons and texts always stay in place; big windows can't be made smaller than their content.",
-    "Options > General shows the port that is really in use.",
-    "A clear message when the connection to the browser can't be opened.",
+const WHATS_NEW: [&str; 2] = [
+    "Facebook videos download again: Down Tech now uses your browser's Facebook login when the video needs it.",
+    "Before installing a new version, Down Tech asks you first.",
 ];
 
 thread_local! {
