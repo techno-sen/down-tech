@@ -1,0 +1,8 @@
+/target
+**/*.rs.bk
+build-cache/
+signing/
+__pycache__/
+tools/ffmpeg/win64/
+dist/
+icon-preview.png
